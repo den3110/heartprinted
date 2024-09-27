@@ -277,11 +277,11 @@ export default {
       return res.status(200).json({ acessToken: token, ok: true });
     } catch (error) {
       //   console.log(error);
-      //   if(error?.response?.statuC)
-      console.log(error?.response?.data?.code);
+      //   if(error.response.statuC)
+      console.log(error.response.data.code);
       return res
-        .status(error?.response?.data?.code)
-        .json({ ok: false, message: error?.response?.data?.error_message });
+        .status(error.response.data.code)
+        .json({ ok: false, message: error.response.data.error_message });
     }
   },
   async loginClient(req, res) {
@@ -354,7 +354,7 @@ export default {
     }
   },
   async checkTokenExpiration(req, res) {
-    const token = req.headers["authorization"]?.split(" ")[1]; // Lấy token từ header
+    const token = req.headers["authorization"].split(" ")[1]; // Lấy token từ header
 
     if (!token) {
       return res.status(403).json({ error: "No token provided!" });

@@ -91,16 +91,16 @@ export default {
           user_id: req.user.id,
         })
         .then((product) => {
-          JSON.parse(image)?.map((item) =>
+          JSON.parse(image).map((item) =>
             db.productphoto.create({
-              imgUrl: item?.product,
+              imgUrl: item.product,
               productId: product.dataValues.id,
             })
           );
           if (newaddimage) {
-            JSON.parse(newaddimage)?.map((item) =>
+            JSON.parse(newaddimage).map((item) =>
               db.productphoto.create({
-                imgUrl: item?.product,
+                imgUrl: item.product,
                 productId: product.dataValues.id,
               })
             );
@@ -225,9 +225,9 @@ export default {
         })
         .then((p) => {
           if (newaddimage) {
-            JSON.parse(newaddimage)?.map((item) =>
+            JSON.parse(newaddimage).map((item) =>
               db.productphoto.create({
-                imgUrl: item?.imageUrl,
+                imgUrl: item.imageUrl,
                 productId: productId,
               })
             );
