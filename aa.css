@@ -1,0 +1,26 @@
+@media screen and (max-width: 1248px) {
+    .qti_layout_363 {
+        width: 100% !important;
+    }
+    .portlet-layout.row {
+        width: 100% !important;
+        margin: 0 !important
+    }
+    .col-md-12.portlet-column.portlet-column-only {
+        padding: 0 !important
+    }
+    .second-nav .container {
+        padding: 0 !important
+    }
+    .second-nav .container .row {
+        width: 100% !important;
+        margin: 0 !important
+    }
+    .portlet-layout.row {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    .col-md-3.portlet-column.portlet-column-first {
+        padding: 0 !important
+    }
+}
