@@ -54,6 +54,6 @@ db.sequelize.authenticate().then(function () {
 checkExpiredVouchers.start()
 
 /* Start Listening service */
-app.listen(5000, () => {
-	console.log(`Server is running at PORT http://localhost:${5000}`);
+app.listen(process.env.APP_PORT, () => {
+	console.log(`Server is running at PORT http://localhost:${process.env.APP_PORT}`);
 });
