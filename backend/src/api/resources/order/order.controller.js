@@ -5,63 +5,88 @@ export default {
 
     async index(req, res) {
         try {
-            const { customerId, paymentmethod, orderId, deliveryAddress, product, grandTotal, voucherId, deliveryCharge, reason } = req.body;
-            console.log(voucherId)
-            db.customer.findOne({ where: { id: customerId } })
-                .then(p => {
-                    if (p) {
-                        return db.Order.create({
-                            custId: customerId,
-                            number: orderId,
-                            grandtotal: grandTotal,
-                            paymentmethod: paymentmethod,
-                            voucherId: voucherId || 0, 
-                            deliveryFee: deliveryCharge,
-                            reason: reason || ""
-                        })
+            const {id }= req.user
+            const { customerId, method, orderID, shipping, product, total, deliveryCharge, currency } = req.body;
+            let status= ""
+            if(method=== "paypal") {
+                const auth = Buffer.from(`${process.env.CLIENT_ID_PAYPAL}:${process.env.SECRET_PAYPAL}`).toString('base64');
+                try {
+                    // Gọi PayPal API để kiểm tra trạng thái của order
+                    const response = await fetch(`${process.env.PAYPAL_API}/v2/checkout/orders/${orderID}`, {
+                      method: 'GET',
+                      headers: {
+                        'Authorization': `Basic ${auth}`,
+                        'Content-Type': 'application/json',
+                      },
+                    });
+                
+                    const data = await response.json();
+                
+                    // Kiểm tra trạng thái thanh toán
+                    if (data.status === 'COMPLETED') {
+                      // Xử lý lưu đơn hàng vào database, hoặc các hành động cần thiết
+                      status= data.status
+                      if(id) {
+                        await db.product.destroy({ where: { user_id: id } });
+                      }
+                    } else {
+                      status= data.status
                     }
-                    return res.status(500).json({ 'errors': ['User is not found'] });
-                })
+                  } catch (error) {
+                    status= "error"
+                    console.error('Error checking PayPal order status:', error);
+                  }
+            }
+            // console.log(voucherId)
+                    await db.Order.create({
+                            custId: id,
+                            number: orderID,
+                            grandtotal: total,
+                            paymentmethod: method,
+                            deliveryFee: deliveryCharge,
+                            status: status,
+                            unit: currency
+                        })
                 .then((order) => {
                     if (order) {
                         return db.Address.create({
                             orderId: order.id,
-                            custId: customerId,
-                            fullname: deliveryAddress?deliveryAddress.name:'',
-                            phone: deliveryAddress?deliveryAddress.phone:'',
-                            discrict: deliveryAddress?deliveryAddress.discrict:'',
-                            city: deliveryAddress?deliveryAddress.city:'',
-                            states: deliveryAddress?deliveryAddress.states:'',
-                            shipping: deliveryAddress?deliveryAddress.address:'',
+                            custId: 1,
+                            fullname: shipping? shipping.name : '',
+                            phone: shipping?shipping.phone:'',
+                            discrict: shipping?.address ?shipping?.address?.address_line_1:'',
+                            city: shipping?.address ? shipping?.admin_area_1:'',
+                            states: shipping?.address ? shipping?.country_code:'',
+                            shipping: shipping?.address ? shipping.address?.address_line_1 +  shipping.address?.admin_area_2 +  shipping.address?.admin_area_1 :'',
                         }).then((p) => [order, p])
                     }
                 })
-                .then(([order, p]) => {
-                    if (order) {
-                        let cartEntries = [];
-                        for (var i = 0; i < product.length; i++) {
-                            cartEntries.push({
-                                orderId: order.id,
-                                addressId: p.id,
-                                productId: product[i].id,
-                                name: product[i].name,
-                                qty: product[i].qty,
-                                price: product[i].price,
-                                total: product[i].total,
-                                photo: product[i].photo,
-                                discount: product[i].discountPer
-                            })
-                        }
-                        return db.Cart.bulkCreate(cartEntries).then((r) => [r])
-                    }
-                })
+                // .then(([order, p]) => {
+                //     if (order) {
+                //         let cartEntries = [];
+                //         for (var i = 0; i < product.length; i++) {
+                //             cartEntries.push({
+                //                 orderId: order.id,
+                //                 addressId: p.id,
+                //                 productId: product[i].id,
+                //                 name: product[i].name,
+                //                 qty: product[i].qty,
+                //                 price: product[i].price,
+                //                 total: product[i].total,
+                //                 photo: product[i].photo,
+                //                 discount: product[i].discountPer
+                //             })
+                //         }
+                //         return db.Cart.bulkCreate(cartEntries).then((r) => [r])
+                //     }
+                // })
                 .then((success) => {
-                    mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered successfully, ordered at "+ new Date())
-                    res.status(200).json({ 'success': true });
+                    // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered successfully, ordered at "+ new Date())
+                    res.status(200).json({ 'success': true, ok: true });
                 })
                 .catch(function (err) {
-                    mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered failed, ordered at "+ new Date())
-                    console.log(err);   
+                    // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered failed, ordered at "+ new Date())
+                    // console.log(err);   
                     res.status(500).json({ 'errors': ['Error adding cart'] });
                 });
         }
@@ -196,6 +221,19 @@ export default {
             res.status(500).json({ 'errors': "" + err });
         }
     },
+    async getOrderPayment(req, res) {
+        const {id }= req.user
+        try {
+            const data= await db.Order.findAll({
+                where: {
+                    custId: id
+                },
+            })
+            return res.status(200).json({ok: true, data})
+        } catch (error) {
+            return res.status(500).json({err, ok: false})
+        }
+    }
 }
 
 

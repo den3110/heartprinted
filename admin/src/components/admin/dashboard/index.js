@@ -357,7 +357,7 @@ const Home = () => {
                                   </span>
                                 )}
                               </td>
-                              <td>VND{numberWithCommas(row.grandtotal)}</td>
+                              <td>{row.unit} {numberWithCommas(row.grandtotal)}</td>
                               <td className="action-btns">
                                 <Link
                                   className="views-btn"

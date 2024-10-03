@@ -188,14 +188,18 @@ const View = (props) => {
                                       </td>
                                       <td>{p.name}</td>
                                       <td className="text-center">
-                                        VND{numberWithCommas(p.price)}
+                                        {p.unit}
+                                        {numberWithCommas(p.price)}
                                       </td>
                                       <td className="text-center">
                                         {p.discount}%
                                       </td>
                                       <td className="text-center">{p.qty}</td>
                                       <td className="text-center">
-                                        VND{numberWithCommas((parseInt(p.price) * parseInt(p.qty)))}
+                                        {p.unit}
+                                        {numberWithCommas(
+                                          parseInt(p.price) * parseInt(p.qty)
+                                        )}
                                       </td>
                                     </tr>
                                   ))}
@@ -218,7 +222,8 @@ const View = (props) => {
                             Delivery Fees
                           </div>
                           <div className="order-total-right-text">
-                            VND{numberWithCommas(self.deliveryFee)}
+                            {p.unit}
+                            {numberWithCommas(self.deliveryFee)}
                           </div>
                         </div>
                         {self && self.voucherId != 0 && (
@@ -227,7 +232,8 @@ const View = (props) => {
                               Discount
                             </div>
                             <div className="order-total-right-text">
-                              VND{numberWithCommas(dataVoucher.data.discount)}
+                              {p.unit}
+                              {numberWithCommas(dataVoucher.data.discount)}
                             </div>
                           </div>
                         )}
@@ -236,7 +242,8 @@ const View = (props) => {
                             Total Amount
                           </div>
                           <div className="order-total-right-text fsz-18">
-                            VND{numberWithCommas(self.grandtotal)}
+                            {p.unit}
+                            {numberWithCommas(self.grandtotal)}
                           </div>
                         </div>
                       </div>
