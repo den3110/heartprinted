@@ -5,7 +5,13 @@ export default {
 
     async index(req, res) {
         try {
-            const {id }= req.user
+            let id
+            if(req.user) {
+             id= req.user.id
+            }
+            else {
+                id= 0
+            }
             const { customerId, method, orderID, shipping, product, total, deliveryCharge, currency } = req.body;
             let status= ""
             if(method=== "paypal") {
@@ -82,7 +88,7 @@ export default {
                 // })
                 .then((success) => {
                     // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered successfully, ordered at "+ new Date())
-                    res.status(200).json({ 'success': true, ok: true });
+                    res.status(200).json({ 'success': true, ok: true, status: 'COMPLETED' });
                 })
                 .catch(function (err) {
                     // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered failed, ordered at "+ new Date())
@@ -91,7 +97,8 @@ export default {
                 });
         }
         catch (err) {
-            throw new RequestError('Error');
+            console.log(err)
+            return res.status(500).json({ err: err });
         }
     },
 

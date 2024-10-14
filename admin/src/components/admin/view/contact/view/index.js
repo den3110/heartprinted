@@ -68,7 +68,7 @@ const View = () => {
   };
 
   const handleAddNewUser = () => {
-    history.push({ pathname: `/admin/user/create` });
+    // history.push({ pathname: `/admin/user/create` });
   };
 
   // Hàm để lấy danh sách item trên trang hiện tại

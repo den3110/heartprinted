@@ -248,12 +248,12 @@ export default class Sidebar extends Component {
                 </div>
                 Voucher
               </Link> */}
-              {/* <Link className={isActive("/admin/contact/list")} to="/admin/contact/list">
+              <Link className={isActive("/admin/contact/list")} to="/admin/contact/list">
                 <div className="sb-nav-link-icon">
                   <i className="fas fa-gift" />
                 </div>
                 Contact
-              </Link> */}
+              </Link>
             </div>
           </div>
         </nav>
