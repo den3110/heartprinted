@@ -9059,6 +9059,11 @@ jiti@^1.21.0:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.6.tgz#6c7f7398dd4b3142767f9a168af2f317a428d268"
   integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
 
+jquery@>=1.7.0:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.7.1.tgz#083ef98927c9a6a74d05a6af02806566d16274de"
+  integrity sha512-m4avr8yL8kmFN8psrbFFFmB/If14iN5o9nw/NgnnM+kybDJpRsAynV2BsfpTYrTRysYUdADVD7CkUUizgkpLfg==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -9372,6 +9377,27 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+lg-fullscreen@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/lg-fullscreen/-/lg-fullscreen-1.2.1.tgz#9402aae62ce22148e13bee2fb177f2195dbbfbd6"
+  integrity sha512-mntHGBHEKWfbz/ZiFkWQhBgxzm8ZtWUcgI83GOv9uxmtGi5G9mhTxplkHODHNt9+Ss+IHYZJav/UTjcGPIcSVw==
+  dependencies:
+    jquery ">=1.7.0"
+
+lg-thumbnail@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/lg-thumbnail/-/lg-thumbnail-1.2.1.tgz#9cb90c36896c51159ea36592fa4ba9bcf164504b"
+  integrity sha512-Z4LUYJgz/CeTgyruLNN4FGHmS21KAIk9lOVjq3kDDNNncgc74Tul9Mp9mvXfbO36SrJVNyfTQWnHzAEvYDv3aQ==
+  dependencies:
+    jquery ">=1.7.0"
+
+lg-zoom@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/lg-zoom/-/lg-zoom-1.3.0.tgz#52e466a487f8b53cd3fe6e853152a042e2fca6cd"
+  integrity sha512-+hZmeZ3DQslAA19tpKSA3kpiwrbB/weRC7b7GiCQEqDaEon1mp1RDQKHfx32gbbeQNGVhBFAiSvB3OHbimVmbg==
+  dependencies:
+    jquery ">=1.7.0"
+
 libcipm@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/libcipm/-/libcipm-4.0.8.tgz#dcea4919e10dfbce420327e63901613b9141bc89"
@@ -9505,6 +9531,11 @@ libnpx@^10.2.4:
     which "^1.3.0"
     y18n "^4.0.0"
     yargs "^14.2.3"
+
+lightgallery@^2.7.2:
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/lightgallery/-/lightgallery-2.7.2.tgz#9309216986fbce60602b851e1ef80cf40769c3d3"
+  integrity sha512-Ewdcg9UPDqV0HGZeD7wNE4uYejwH2u0fMo5VAr6GHzlPYlhItJvjhLTR0cL0V1HjhMsH39PAom9iv69ewitLWw==
 
 lilconfig@^2.0.3, lilconfig@^2.1.0:
   version "2.1.0"

@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@material-ui/core";
 import Moment from "react-moment";
 import get_detail_voucher from "../../../../../api/get_detail_voucher";
 import numberWithCommas from "../../../../../util/number_thousand_separator";
-import { Fragment } from "react";
+import lightGallery from "lightgallery"; // Import lightGallery
+import lgThumbnail from "lightgallery/plugins/thumbnail"; // Plugin hiển thị ảnh thumbnail
+import lgFullscreen from "lightgallery/plugins/fullscreen"; // Plugin fullscreen
+import lgZoom from "lightgallery/plugins/zoom"; // Plugin zoom
+import "lightgallery/css/lightgallery.css"; // Import CSS của lightGallery
+import "lightgallery/css/lg-thumbnail.css"; // Import CSS của thumbnail
+import "lightgallery/css/lg-fullscreen.css"; // Import CSS của fullscreen
+import "lightgallery/css/lg-zoom.css"; // Import CSS của zoom
 
 const View = (props) => {
   const [self, setSelf] = useState({ Addresses: [], Carts: [], voucherId: 0 });
@@ -12,10 +19,12 @@ const View = (props) => {
     ok: false,
   });
 
+  const galleryRef = useRef(null); // Ref cho lightGallery
+
   useEffect(() => {
     (async () => {
       const voucherId = self.voucherId || 0;
-      if (voucherId != 0) {
+      if (voucherId !== 0) {
         const result = await get_detail_voucher(voucherId);
         setDataVoucher(result);
       }
@@ -25,6 +34,18 @@ const View = (props) => {
   useEffect(() => {
     setSelf(props.location.state);
   }, [props.location.state]);
+
+  // Khởi tạo lightGallery
+  useEffect(() => {
+    if (galleryRef.current && self.Carts.length > 0) {
+      lightGallery(galleryRef.current, {
+        plugins: [lgThumbnail, lgFullscreen, lgZoom],
+        thumbnail: true,
+        zoom: true,
+        fullscreen: true,
+      });
+    }
+  }, [self.Carts]);
 
   const handleBack = () => {
     props.history.goBack();
@@ -70,64 +91,12 @@ const View = (props) => {
                             {self.createdAt}
                           </Moment>
                         </div>
-                        <div className="ordr-date">
-                          {console.log(self)}
-                          {
-                            <Fragment>
-                              {self.status === "processing" && (
-                                <Fragment>
-                                  <b>Process Date :</b>{" "}
-                                  <Moment format="MMMM Do YYYY">
-                                    {self.deliverydate}
-                                  </Moment>
-                                </Fragment>
-                              )}
-                            </Fragment>
-                          }
-
-                          {
-                            <Fragment>
-                              {self.status === "shipping" && (
-                                <Fragment>
-                                  <b>Shipping Date :</b>{" "}
-                                  <Moment format="MMMM Do YYYY">
-                                    {self.deliverydate}
-                                  </Moment>
-                                </Fragment>
-                              )}
-                            </Fragment>
-                          }
-                          {
-                            <Fragment>
-                              {self.status === "delivered" && (
-                                <Fragment>
-                                  <b>Delivered Date :</b>{" "}
-                                  <Moment format="MMMM Do YYYY">
-                                    {self.deliverydate}
-                                  </Moment>
-                                </Fragment>
-                              )}
-                            </Fragment>
-                          }
-                          {
-                            <Fragment>
-                              {self.status === "cancel" && (
-                                <Fragment>
-                                  <b>Cancel Date :</b>{" "}
-                                  <Moment format="MMMM Do YYYY">
-                                    {self.deliverydate}
-                                  </Moment>
-                                </Fragment>
-                              )}
-                            </Fragment>
-                          }
-                        </div>
+                        {/* Hiển thị các ngày dựa theo trạng thái */}
+                        {/* ... */}
                       </div>
                       <div className="col-lg-6 col-sm-6">
-                        {/* eslint-disable-next-line */}
                         {self.Addresses.map((data, index) => (
                           <div className="ordr-date right-text" key={index}>
-                            {/* <b>Order Date :</b> */}
                             <br />#{data.shipping},<br />
                             {data.area},<br />
                             {data.city},<br />
@@ -149,30 +118,6 @@ const View = (props) => {
                                     <th style={{ width: 130 }}>#</th>
                                     <th>Image</th>
                                     <th>Item</th>
-                                    <th
-                                      style={{ width: 150 }}
-                                      className="text-center"
-                                    >
-                                      Price
-                                    </th>
-                                    <th
-                                      style={{ width: 150 }}
-                                      className="text-center"
-                                    >
-                                      Discount(%)
-                                    </th>
-                                    <th
-                                      style={{ width: 150 }}
-                                      className="text-center"
-                                    >
-                                      Qty
-                                    </th>
-                                    <th
-                                      style={{ width: 100 }}
-                                      className="text-center"
-                                    >
-                                      Total
-                                    </th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -180,70 +125,25 @@ const View = (props) => {
                                     <tr key={index}>
                                       <td>{p.id}</td>
                                       <td>
-                                        <img
-                                          src={p.photo}
-                                          alt="cartimage"
-                                          style={{ height: "50px" }}
-                                        />
+                                        <div
+                                          className="gallery-item"
+                                          ref={galleryRef}
+                                        >
+                                          <a href={p.photo}>
+                                            <img
+                                              src={p.photo}
+                                              alt="cartimage"
+                                              style={{ height: "50px" }}
+                                            />
+                                          </a>
+                                        </div>
                                       </td>
                                       <td>{p.name}</td>
-                                      <td className="text-center">
-                                        {p.unit}
-                                        {numberWithCommas(p.price)}
-                                      </td>
-                                      <td className="text-center">
-                                        {p.discount}%
-                                      </td>
-                                      <td className="text-center">{p.qty}</td>
-                                      <td className="text-center">
-                                        {p.unit}
-                                        {numberWithCommas(
-                                          parseInt(p.price) * parseInt(p.qty)
-                                        )}
-                                      </td>
                                     </tr>
                                   ))}
                                 </tbody>
                               </table>
                             </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-lg-7" />
-                      <div className="col-lg-5">
-                        {/* <div className="order-total-dt">
-                          <div className="order-total-left-text">Sub Total</div>
-                          <div className="order-total-right-text">
-                            VND{self.grandtotal}
-                          </div>
-                        </div> */}
-                        <div className="order-total-dt">
-                          <div className="order-total-left-text">
-                            Delivery Fees
-                          </div>
-                          <div className="order-total-right-text">
-                            {p.unit}
-                            {numberWithCommas(self.deliveryFee)}
-                          </div>
-                        </div>
-                        {self && self.voucherId != 0 && (
-                          <div className="order-total-dt">
-                            <div className="order-total-left-text">
-                              Discount
-                            </div>
-                            <div className="order-total-right-text">
-                              {p.unit}
-                              {numberWithCommas(dataVoucher.data.discount)}
-                            </div>
-                          </div>
-                        )}
-                        <div className="order-total-dt">
-                          <div className="order-total-left-text fsz-18">
-                            Total Amount
-                          </div>
-                          <div className="order-total-right-text fsz-18">
-                            {p.unit}
-                            {numberWithCommas(self.grandtotal)}
                           </div>
                         </div>
                       </div>

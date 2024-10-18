@@ -38,10 +38,11 @@ const Home = () => {
   ];
 
   const data = [
-    { name: "Order Process", value: (statusList && statusList.find(item=> item.status=== "processing").total) ? statusList.find(item=> item.status=== "processing").total : 0 },
+    { name: "Order Process", value: (statusList && statusList.find(item=> item?.status=== "processing")?.total) ? statusList.find(item=> item.status=== "processing").total : 0 },
     { name: "Order Shipping", value: (statusList && statusList.find(item=> item.status=== "shipping")) ? statusList.find(item=> item.status=== "shipping").total : 0 },
-    { name: "Order Delivered", value: (statusList && statusList.find(item=> item.status=== "delieverd").total) ? statusList.find(item=> item.status=== "delieverd").total : 0 },
-    { name: "Order Canceled", value: (statusList && statusList.find(item=> item.status=== "cancel").total) ? statusList.find(item=> item.status=== "cancel").total : 0 },
+    { name: "Order Delivered", value: (statusList && statusList.find(item=> item.status=== "delieverd")?.total) ? statusList.find(item=> item.status=== "delieverd").total : 0 },
+    { name: "Order Canceled", value: (statusList && statusList.find(item=> item.status=== "cancel")?.total) ? statusList.find(item=> item.status=== "cancel").total : 0 },
+    { name: "Order Paymented", value: (statusList && statusList.find(item=> item.status=== "COMPLETED")?.total) ? statusList.find(item=> item.status=== "COMPLETED").total : 0 },
   ];
   const options = {
     scales: {
@@ -228,6 +229,37 @@ const Home = () => {
                           key={index}
                           style={
                             row.status === "cancel"
+                              ? { display: "block" }
+                              : { display: "none" }
+                          }
+                        >
+                          {row.total}
+                        </span>
+                      ))
+                    : ""}
+                </div>
+                <div className="card-media">
+                  <i className="far fa-times-circle" />
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-3 col-md-6">
+              <div
+                className="dashboard-report-card red"
+                onClick={() => {
+                  setStatus("cancel");
+                  handleChangeStatus("cancel");
+                }}
+              >
+                <div className="card-content">
+                  <span className="card-title">Order Paymented</span>
+                  {statusList
+                    ? statusList.map((row, index) => (
+                        <span
+                          className="card-count"
+                          key={index}
+                          style={
+                            row.status === "COMPLETED"
                               ? { display: "block" }
                               : { display: "none" }
                           }
