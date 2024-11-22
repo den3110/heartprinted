@@ -18,3 +18,4 @@ authRouter.route('/token').post(authController.loginClient)
 authRouter.route('/new-token').post(authController.register)
 authRouter.route('/authenticate').get(authController.checkTokenExpiration);
 authRouter.route('/profile').get(authenticateJWT ,authController.getProfile);
+authRouter.route('/change/password').put(authenticateJWT ,authController.changePasword);

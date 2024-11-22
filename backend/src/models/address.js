@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     states: DataTypes.STRING,
     area: DataTypes.STRING,
-    shipping: DataTypes.TEXT
+    shipping: DataTypes.TEXT,
+    email: DataTypes.STRING,
   }, {});
   Address.associate = function(models) {
     // associations can be defined here

@@ -388,6 +388,43 @@ export default {
         next(err);
       });
   },
+  async changePasword(req, res) {
+    const { oldPassword, newPassword  } = req.body;
+
+    // Validate required fields
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ error: 'Please provide all fields.' });
+    }
+  
+  
+    // Fetch user from the database
+    try {
+      const {id }= req.user
+      const user = await db.user.findOne({ where: { id: id } });
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.', ok: false  });
+      }
+  
+      // Compare the old password with the stored hashed password
+      if (md5(oldPassword) !== user.password) {
+        return res.status(400).json({ error: 'Incorrect old password.', ok: false  });
+      }
+  
+      // Hash the new password and update the user record
+      const hashedNewPassword = md5(newPassword);
+  
+      await user.update({
+        password: hashedNewPassword,
+      });
+  
+      return res.status(200).json({ message: 'Password updated successfully!', ok: true });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'An error occurred while updating the password.', ok: false });
+    }
+  
+  }
 
 };
 

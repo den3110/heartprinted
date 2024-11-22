@@ -1,5 +1,6 @@
 import mailer from "../../../mailer";
 import { db } from "../../../models";
+import { sendOrderEmail, sendPaymentSuccess } from "../../../service/MailService";
 var Sequelize = require("sequelize");
 
 function generateRandomString(length) {
@@ -36,15 +37,31 @@ export default {
         payload
       } = req.body;
       let status = "";
-      console.log(method);
+      
       if (method == "paypal") {
+        const data= await db.setting.findOne()
+        let client_key
+        let secret_key
+        let paypal_api
+        console.log(data.mode_payment)
+        if(data.mode_payment=== true) {
+          client_key=data.client_key_live
+          secret_key=data.secret_key_live
+          paypal_api=process.env.PAYPAL_API_LIVE
+        }
+        else {
+          client_key=data.client_key_demo
+          secret_key=data.secret_key_demo
+          paypal_api=process.env.PAYPAL_API_DEMO
+        }
         const auth = Buffer.from(
-          `${process.env.CLIENT_ID_PAYPAL}:${process.env.SECRET_PAYPAL}`
+          `${client_key}:${secret_key}`
         ).toString("base64");
+        
         try {
           // Gọi PayPal API để kiểm tra trạng thái của order
           const response = await fetch(
-            `${process.env.PAYPAL_API}/v2/checkout/orders/${orderID}`,
+            `${paypal_api}/v2/checkout/orders/${orderID}`,
             {
               method: "GET",
               headers: {
@@ -61,6 +78,7 @@ export default {
           if (data.status === "COMPLETED") {
             // Xử lý lưu đơn hàng vào database, hoặc các hành động cần thiết
             status = data.status;
+            await sendOrderEmail(req.body)
             if (id) {
               await db.product.destroy({ where: { user_id: id } });
             }
@@ -70,9 +88,17 @@ export default {
         } catch (error) {
           status = "error";
           console.error("Error checking PayPal order status:", error);
+          return res.status(500).json({ errors: ["Error adding cart"] });
         }
       }
-      console.log("status", status);
+      if(method == "banking") {
+        await sendOrderEmail(req.body)
+        status = "waiting"
+      }
+      if(method == "credit") {
+        await sendOrderEmail(req.body)
+        status = "waiting"
+      }
       // console.log(voucherId)
       await db.Order.create({
         custId: id,
@@ -90,6 +116,7 @@ export default {
               custId: 1,
               fullname: shipping ? shipping.name : "",
               phone: shipping ? shipping.phone : "",
+              email: shipping ? shipping.email : "",
               discrict: shipping?.address
                 ? shipping?.address?.address_line_1
                 : "",
@@ -300,4 +327,27 @@ export default {
       return res.status(500).json({ err, ok: false });
     }
   },
+  async deleteOrder(req, res) {
+    const { id } = req.body;
+    try {
+      await db.Order.destroy({
+        where: {
+          id,
+        },
+      });
+      return res.status(200).json({ ok: true });
+    } catch (error) {
+      return res.status(500).json({ err, ok: false });
+    }
+  },
+  async updateOrder(req, res) {
+    try {
+      await sendPaymentSuccess({email: req.body?.Addresses?.[0]?.email, orderID: req.body?.number})
+      await db.Order.update({status: "COMPLETED"}, {where: { id: req.body.id }});
+      return res.status(200).json({ ok: true });
+      
+    } catch (error) {
+      return res.status(500).json({ err, ok: false });
+    }
+  }
 };
