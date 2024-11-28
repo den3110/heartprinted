@@ -46,6 +46,8 @@ productRouter.route('/aws/delete/photo').post( productController.awsProductPhoto
 productRouter.route('/add').post(authenticateJWT, productController.addProduct);
 productRouter.route('/cart').get(authenticateJWT, productController.getProductCart);
 productRouter.route('/cart').post(authenticateJWT, productController.deleteProductCart);
+productRouter.route('/discount').post( productController.applyDiscount);
+productRouter.route('/discount-code').get( productController.getDiscount);
 
 
 

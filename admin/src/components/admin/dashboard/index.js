@@ -15,6 +15,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import delete_order from "../../../api/delete_order";
+import { Button } from "@material-ui/core";
+import update_order from "../../../api/update_order";
 
 const Home = () => {
   const [getList, setGetList] = useState([]);
@@ -415,9 +418,44 @@ const Home = () => {
                                     pathname: `/admin/order/delete/${row.id}`,
                                     state: { row },
                                   }}
+                                  onClick={(e)=> {
+                                    e.preventDefault();
+                                    swal("Thông báo", "Bạn có chắc muốn xóa đơn hàng này?", {
+                                      buttons: ["Cancel", "Confirm"],
+                                    })
+                                    .then(async (value)=> {
+                                      if(value === true) {
+                                        await delete_order(row.id);
+                                        swal("Đã xóa đơn hàng", "Đơn hàng đã được xóa thành công", "success").then(()=> {
+                                          setGetList(getList.filter((item) => item.id!= row.id));
+                                        })
+                                      }
+                                      else {
+                                        return null
+                                      }
+                                    })
+                                  }}
                                 >
                                   <i className="fas fa-trash" />
                                 </Link>
+                                <Button onClick={()=> {
+                                  swal("Thông báo", "Bạn có chắc muốn đánh dấu đơn hàng này đã thanh toán?", {buttons: ["Cancel", "Confirm"],}).then(async (value)=> {
+                                    if(value === true) {
+                                      try {
+                                      const res= await update_order(row);
+                                      if(res.ok=== true) {
+                                        swal("Đã đánh dấu đơn hàng", "Đơn hàng đã được đánh dấu đã thanh toán thành công", "success")
+                                      }
+
+                                      }catch(error) {
+                                        swal("Lỗi", "Đã xảy ra lỗi khi đánh dấu đơn hàng", "error")
+                                      }
+                                    }
+                                    else {
+                                      return null
+                                    }
+                                  })
+                                }} color="primary" variant="contained" style={{whiteSpace: "no-wrap"}}>Đánh dấu đã thanh toán</Button>
                               </td>
                             </tr>
                           ))

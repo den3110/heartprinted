@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     secret_key_demo: DataTypes.STRING,
     client_key_live: DataTypes.STRING,
     secret_key_live: DataTypes.STRING,
+    discount: DataTypes.STRING,
+    amount: DataTypes.INTEGER
   }, {});
   return setting;
 };

@@ -9,7 +9,7 @@ export default class Product extends Component {
             <div id="layoutSidenav_content">
                 <main>
                     <Switch>
-                        <Route path={[`${match.path}/product/list`]} component={List} />
+                        <Route path={[`${match.path}/`]} component={List} />
                     </Switch>
                 </main>
             </div>

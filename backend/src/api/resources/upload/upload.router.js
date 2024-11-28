@@ -16,6 +16,7 @@ const upload = multer({ storage: storage });
 
 uploadRouter.route("/").post(upload.single("image"), uploadController.uploadImage)
 uploadRouter.route("/file").post(upload.single("file"), uploadController.uploadImage)
+uploadRouter.route("/file2").post(upload.single("file"), uploadController.uploadImage2)
 uploadRouter.route("/change-host").post(uploadController.changeHost)
 uploadRouter.route("/change-mime-type").post(uploadController.changeMimeType)
 uploadRouter.route("/change-mime-type-db").post(uploadController.changeMimeTypeDb)

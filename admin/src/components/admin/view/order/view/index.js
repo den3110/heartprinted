@@ -91,6 +91,14 @@ const View = (props) => {
                             {self.createdAt}
                           </Moment>
                         </div>
+                        <div className="ordr-date">
+                          <b>Phone :</b>{" "}
+                            {self?.Addresses?.[0]?.phone}
+                        </div>
+                        <div className="ordr-date">
+                          <b>Email :</b>{" "}
+                            {self?.Addresses?.[0]?.email}
+                        </div>
                         {/* Hiển thị các ngày dựa theo trạng thái */}
                         {/* ... */}
                       </div>

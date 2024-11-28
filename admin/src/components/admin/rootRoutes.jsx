@@ -37,7 +37,7 @@ export default class rootRoutes extends Component {
             <Route path={`${match.path}/user`} component={User} />
             <Route path={`${match.path}/payment`} component={Payment} />
             <Route path={`${match.path}/vendor`} component={VendorProduct} />
-            <Route path={`${match.path}/voucher`} component={Voucher} />
+            <Route path={`${match.path}/settings`} component={Voucher} />
             <Route path={`${match.path}/contact`} component={Contact} />
           </Switch>
         </div>

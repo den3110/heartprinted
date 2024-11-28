@@ -236,12 +236,12 @@ export default class Sidebar extends Component {
                 </div>
                 Quản lý người dùng cấp 2
               </Link>
-              {/* <Link className="nav-link" to="/admin/payment/list">
+              <Link className="nav-link" to="/admin/settings">
                 <div className="sb-nav-link-icon">
                   <i className="fas fa-users" />
                 </div>
-                Payment
-              </Link> */}
+                Cài đặt hệ thống
+              </Link>
               {/* <Link className={isActive("/admin/voucher/list")} to="/admin/voucher/list">
                 <div className="sb-nav-link-icon">
                   <i className="fas fa-gift" />

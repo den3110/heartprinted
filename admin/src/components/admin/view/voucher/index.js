@@ -9,7 +9,7 @@ export default class Voucher extends Component {
             <div id="layoutSidenav_content">
                 <main>
                     <Switch>
-                        <Route path={[`${match.path}/list`]} component={View} />
+                        <Route path={[`${match.path}/`]} component={View} />
                     </Switch>
                 </main>
             </div>

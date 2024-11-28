@@ -747,4 +747,34 @@ export default {
         next(err);
       });
   },
+  async applyDiscount(req, res, next) {
+    try {
+      const data= await db.setting.findOne({ where: { discount: req.body.discount } })
+      if(data) {
+        return res.status(200).json({ ok: true, data: {discount: data.amount} });
+      }
+      else {
+        return res.status(404).json({ ok: false, message: 'Discount not found' });
+      }
+      
+    } catch (error) {
+      return res.status(500).json({ ok: false, message: 'Error' });
+    }
+
+  },
+  async getDiscount(req, res, next) {
+    try {
+      const data= await db.setting.findOne({})
+      if(data) {
+        return res.status(200).json({ ok: true, data: {discount: data.discount, amount: data.amount} });
+      }
+      else {
+        return res.status(404).json({ ok: false, message: 'Discount not found' });
+      }
+      
+    } catch (error) {
+      return res.status(500).json({ ok: false, message: 'Error' });
+    }
+
+  }
 };

@@ -60,5 +60,13 @@ export default {
         console.error(error);
         return res.status(500).json({ ok: false, message: 'An error occurred while retrieving payment info' });
       }
+    },
+    async createDiscount(req, res) {
+      try {
+        await db.setting.update({discount: req.body.discount, amount: req.body.amount}, {where: {id: 1}}  )
+        return res.status(200).json({ok: true, message: 'Discount and amount updated successfully'})
+      } catch (error) {
+        return res.status(500).json({ok: false, message: error.message})
+      }
     }
 };

@@ -6,48 +6,67 @@ import { Sequelize } from "sequelize";
 
 export default {
   async uploadImage(req, res) {
-  if (!req.file) {
-    return res.status(400).send("No file uploaded.");
-  }
-
-  const uploadDir = path.join("x_image_blog");
-  const originalImagePath = path.join(uploadDir, req.file.filename);
-
-  try {
-    // ??c file ?? ki?m tra ??nh d?ng
-    const imageBuffer = fs.readFileSync(originalImagePath);
-
-    // Ki?m tra v? x? l? n?u file l? ?nh
-    const metadata = await sharp(imageBuffer).metadata();
-
-    if (!metadata.format) {
-      return res.status(400).send("Uploaded file is not a valid image.");
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
     }
 
-    // ??nh ???ng d?n l?u ?nh n?n
-    const compressedImagePath = path.join(
-      uploadDir,
-      `${req.file.filename.split(".")[0]}.jpg`
-    );
+    const uploadDir = path.join("x_image_blog");
+    const originalImagePath = path.join(uploadDir, req.file.filename);
 
-    // N?n ?nh v? chuy?n ??i sang JPG
-    await sharp(imageBuffer)
-      .jpeg({ quality: 85 })
-      .toFile(compressedImagePath);
+    try {
+      // ??c file ?? ki?m tra ??nh d?ng
+      const imageBuffer = fs.readFileSync(originalImagePath);
 
-    // X?a ?nh g?c n?u c?n
-    fs.unlinkSync(originalImagePath);
+      // Ki?m tra v? x? l? n?u file l? ?nh
+      const metadata = await sharp(imageBuffer).metadata();
 
-    const imageUrl = `${req.protocol}://${req.get("host")}/x_image_blog/${
-      req.file.filename.split(".")[0]
-    }.jpg`;
+      if (!metadata.format) {
+        return res.status(400).send("Uploaded file is not a valid image.");
+      }
 
-    res.json({ imageUrl: imageUrl, file_path: imageUrl });
-  } catch (error) {
-    console.error("Error processing image:", error);
-    return res.status(500).send("Error processing image.");
-  }
-},
+      // ??nh ???ng d?n l?u ?nh n?n
+      const compressedImagePath = path.join(
+        uploadDir,
+        `${req.file.filename.split(".")[0]}.jpg`
+      );
+
+      // N?n ?nh v? chuy?n ??i sang JPG
+      await sharp(imageBuffer)
+        .jpeg({ quality: 85 })
+        .toFile(compressedImagePath);
+
+      // X?a ?nh g?c n?u c?n
+      fs.unlinkSync(originalImagePath);
+
+      const imageUrl = `${req.protocol}://${req.get("host")}/x_image_blog/${
+        req.file.filename.split(".")[0]
+      }.jpg`;
+
+      res.json({ imageUrl: imageUrl, file_path: imageUrl });
+    } catch (error) {
+      console.error("Error processing image:", error);
+      return res.status(500).send("Error processing image.");
+    }
+  },
+  async uploadImage2(req, res) {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
+    }
+  
+    try {
+      // Đường dẫn lưu file
+      const uploadDir = path.join("x_image_blog");
+      const filePath = path.join(uploadDir, req.file.filename);
+  
+      // Đường dẫn trả về
+      const imageUrl = `${req.protocol}://${req.get("host")}/x_image_blog/${req.file.filename}`;
+      // const filePathFinal= `${req.protocol}://${req.get("host")}/${filePath}`;
+      res.json({ imageUrl, file_path: imageUrl });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      return res.status(500).send("Error uploading image.");
+    }
+  },
   async changeHost(req, res) {
     try {
       // Kết nối đến cơ sở dữ liệu
