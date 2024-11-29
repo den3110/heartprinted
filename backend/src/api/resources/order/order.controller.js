@@ -154,7 +154,7 @@ export default {
           // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered successfully, ordered at "+ new Date())
           res
             .status(200)
-            .json({ success: true, ok: true, status: "COMPLETED" });
+            .json({ success: true, ok: true, status: "COMPLETED", orderID: orderID});
         })
         .catch(function (err) {
           // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered failed, ordered at "+ new Date())
