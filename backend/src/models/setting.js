@@ -7,7 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     client_key_live: DataTypes.STRING,
     secret_key_live: DataTypes.STRING,
     discount: DataTypes.STRING,
-    amount: DataTypes.INTEGER
+    amount: DataTypes.INTEGER,
+    bank_name: DataTypes.STRING,
+    bank_account: DataTypes.STRING,
+    iban: DataTypes.STRING,
+    bic: DataTypes.STRING,
   }, {});
   return setting;
 };

@@ -18,6 +18,7 @@ import swal from "sweetalert";
 import change_password from "../../../../../api/change_password";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import create_discount from "../../../../../api/create_discount";
+import update_bank from "../../../../../api/update_bank";
 
 const View = () => {
   const history = useHistory();
@@ -29,6 +30,12 @@ const View = () => {
   const [secretKeyDemo, setSecretKeyDemo] = useState("");
   const [clientKeyLive, setClientKeyLive] = useState("");
   const [secretKeyLive, setSecretKeyLive] = useState("");
+
+  // New state variables for bank details
+  const [bankName, setBankName] = useState("");
+  const [bankAccount, setBankAccount] = useState("");
+  const [iban, setIban] = useState("");
+  const [bic, setBic] = useState("");
 
   // States for password change
   const [oldPassword, setOldPassword] = useState("");
@@ -94,6 +101,28 @@ const View = () => {
 
         console.error(error);
       }
+    }
+  };
+
+  // Function to handle form submission and send data to the API
+  const handleSaveBankAccount = async () => {
+    try {
+      const res = await update_bank({
+       
+        bank_name: bankName,            // Add bank name
+        bank_account: bankAccount,      // Add bank account number
+        iban: iban,                     // Add IBAN
+        bic: bic                        // Add BIC
+      });
+      if (res.ok === true) {
+        swal("Thông báo", "Cập nhật thành công!", "success");
+      } else {
+        swal("Thông báo", "Cập nhật thất bại!", "error");
+      }
+    } catch (error) {
+      swal("Thông báo", "Cập nhật thất bại!", "error");
+
+      console.error(error);
     }
   };
 
@@ -396,6 +425,70 @@ const View = () => {
                     Tạo mã giảm giá
                   </Button>
                 </Box>
+                <div className="row justify-content-between">
+        <div className="col-lg-12 col-md-12">
+          <div className="card card-static-2 mt-30 mb-30">
+            <div className="card-title-2">
+              <h4>Thông tin ngân hàng</h4>
+            </div>
+            <div className="card-body-table">
+              <Box mb={1}>
+                <Card>
+                  <Typography variant="h6" sx={{ padding: 2 }}>
+                    Thông tin ngân hàng
+                  </Typography>
+
+                  {/* Input fields for bank details */}
+                  <Box sx={{ padding: 2 }}>
+                    <TextField
+                      fullWidth
+                      label="Tên ngân hàng"
+                      variant="outlined"
+                      value={bankName}
+                      onChange={(e) => setBankName(e.target.value)}
+                      style={{ marginBottom: 10 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Số tài khoản ngân hàng"
+                      variant="outlined"
+                      value={bankAccount}
+                      onChange={(e) => setBankAccount(e.target.value)}
+                      style={{ marginBottom: 10 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="IBAN"
+                      variant="outlined"
+                      value={iban}
+                      onChange={(e) => setIban(e.target.value)}
+                      style={{ marginBottom: 10 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="BIC"
+                      variant="outlined"
+                      value={bic}
+                      onChange={(e) => setBic(e.target.value)}
+                      style={{ marginBottom: 10 }}
+                    />
+                  </Box>
+
+                  {/* Save button */}
+                  <Button
+                    onClick={handleSaveBankAccount}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                  >
+                    Lưu thông tin
+                  </Button>
+                </Card>
+              </Box>
+            </div>
+          </div>
+        </div>
+      </div>
               </div>
             </div>
           </div>

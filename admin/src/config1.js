@@ -1,1 +1,2 @@
-export const API_URL= "http://localhost:5123"
+export const API_URL= "https://api.memorri.com"
+

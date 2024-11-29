@@ -36,6 +36,19 @@ export default {
         return res.status(500).json({ok: false, message: error.message})
     }
   },
+  async updateBank(req, res) {
+    try {
+        await db.setting.update({...req.body}, {where: {id: 1}}  )
+        const data= await db.setting.findOne({
+
+        })
+        return res.status(200).json({ok: true, data})
+        
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ok: false, message: error.message})
+    }
+  },
   async getInfoPayment(req, res) {
     
     try {
