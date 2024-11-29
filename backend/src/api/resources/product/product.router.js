@@ -48,6 +48,7 @@ productRouter.route('/cart').get(authenticateJWT, productController.getProductCa
 productRouter.route('/cart').post(authenticateJWT, productController.deleteProductCart);
 productRouter.route('/discount').post( productController.applyDiscount);
 productRouter.route('/discount-code').get( productController.getDiscount);
+productRouter.route('/discount').get( productController.getDiscount);
 
 
 

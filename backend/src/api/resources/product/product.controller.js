@@ -776,5 +776,7 @@ export default {
       return res.status(500).json({ ok: false, message: 'Error' });
     }
 
-  }
+  },
+
+  
 };
