@@ -11,3 +11,7 @@
 /admin/node_modules
 ./admin/node_modules
 /.admin/node_modules
+
+/admin/build
+./admin/build
+/.admin/build

@@ -49,6 +49,26 @@ export default {
         return res.status(500).json({ok: false, message: error.message})
     }
   },
+  async getBank(req, res) {
+    try {
+      // Retrieve the payment mode and keys from the database or configuration
+      const settings = await db.setting.findOne(); // Assuming you have a settings table or model
+  
+      // Check if settings exist and mode_payment is available
+      if (!settings) {
+        return res.status(404).json({ ok: false, message: 'Settings not found' });
+      }
+  
+      const { bank_name, bank_account, bic, iban  } = settings;
+      const data = { bank_name, bank_account, bic, iban };
+  
+      // Return the data with an OK response
+      return res.status(200).json({ ok: true, data });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ ok: false, message: 'An error occurred while retrieving payment info' });
+    }
+  },
   async getInfoPayment(req, res) {
     
     try {

@@ -137,6 +137,10 @@ const View = () => {
         setSecretKeyLive(response?.data?.secret_key_live);
         setDiscountCode(response?.data?.discount);
         setDiscountAmount(response?.data?.amount);
+        setBankAccount(response?.data?.bank_account);
+        setBankName(response?.data?.bank_name);
+        setIban(response?.data?.iban);
+        setBic(response?.data?.bic);
       } catch (error) {
         console.error(error);
       }
