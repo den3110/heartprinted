@@ -114,7 +114,6 @@ export default {
     
         // Handle image upload
         if (req.file) {
-          console.log(req.file)
           imagePath = req.file.path; // Đường dẫn file
         }
     
