@@ -114,13 +114,7 @@ export default {
     
         // Handle image upload
         if (req.file) {
-          const file = req.file;
-          const fileName = `${Date.now()}-${file.originalname}`;
-          const uploadPath = path.join(__dirname, "../uploads", fileName);
-    
-          // Save file to server
-          fs.writeFileSync(uploadPath, file.buffer);
-          imagePath = `/uploads/${fileName}`; // Lưu đường dẫn ảnh
+          imagePath = `/uploads/${req.file.filename}`; // Đường dẫn file
         }
     
         // Create a new review
