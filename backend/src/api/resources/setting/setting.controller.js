@@ -115,7 +115,7 @@ export default {
         // Handle image upload
         if (req.file) {
           console.log(req.file)
-          imagePath = `/uploads/${req.file.filename}`; // Đường dẫn file
+          imagePath = req.file.path; // Đường dẫn file
         }
     
         // Create a new review
