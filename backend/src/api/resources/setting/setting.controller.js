@@ -101,5 +101,52 @@ export default {
       } catch (error) {
         return res.status(500).json({ok: false, message: error.message})
       }
+    },
+    async createReview(req, res) {
+      try {
+        const { name, rating, content } = req.body;
+        let imagePath = null;
+    
+        // Validate input
+        if (!name || !rating || !content) {
+          return res.status(400).json({ message: "Name, rating, and content are required." });
+        }
+    
+        // Handle image upload
+        if (req.file) {
+          const file = req.file;
+          const fileName = `${Date.now()}-${file.originalname}`;
+          const uploadPath = path.join(__dirname, "../uploads", fileName);
+    
+          // Save file to server
+          fs.writeFileSync(uploadPath, file.buffer);
+          imagePath = `/uploads/${fileName}`; // Lưu đường dẫn ảnh
+        }
+    
+        // Create a new review
+        const newReview = await db.review.create({
+          name,
+          rating,
+          content,
+          image: imagePath,
+        });
+    
+        res.status(201).json(newReview);
+      } catch (error) {
+        console.error("Error creating review:", error);
+        res.status(500).json({ message: "Internal server error." });
+      }
+    },
+    async getReviews(req, res) {
+      try {
+        const reviews = await db.review.findAll({
+          order: [["date", "DESC"]],
+        });
+    
+        res.status(200).json(reviews);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+        res.status(500).json({ message: "Internal server error." });
+      }
     }
 };
