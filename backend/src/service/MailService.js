@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const { db } = require("../models");
 
 // Tạo transporter cho nodemailer
 const transporter = nodemailer.createTransport({
