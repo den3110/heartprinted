@@ -12,9 +12,10 @@ const transporter = nodemailer.createTransport({
 // Hàm gửi email
 async function sendOrderEmail(user) {
   // Nội dung email
+  const dataBank= await db.setting.findOne({})
+
   const htmlContent = `
-        <!DOCTYPE html>
-            <html lang="en">
+        <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,12 +71,14 @@ async function sendOrderEmail(user) {
                     <p>Sobald wir Ihre Zahlung erhalten haben, wird Ihre Bestellung bearbeitet.</p>
                     <p>Wir haben Ihre Zahlung noch nicht erhalten. Bitte bezahlen Sie die Bestellung. Die Daten finden Sie hier:</p>
                     <div class="bank-details">
-                        <p><strong>Bank Name:</strong> Sparkasse Naspa</p>
-                        <p><strong>Kontoinhaber:</strong> Memorri</p>
-                        <p><strong>IBAN:</strong> De04 5105 0015 0352 8454 57</p>
-                        <p><strong>BIC:</strong> NASSDE55XXX</p>
-                        <p><strong>Verwendungszweck:</strong> <span class="highlight">(Mã đặt hàng ở đây)</span></p>
-                        <p><strong>Gesamtpreis:</strong> 6.20 €</p>
+                        <p><strong>Bank Name:</strong> ${dataBank?.bank_name}</p>
+                        <p><strong>Kontoinhaber:</strong> ${dataBank?.bank_account}</p>
+                        <p><strong>IBAN:</strong> ${dataBank?.iban}</p>
+                        <p><strong>BIC:</strong> ${dataBank?.bic}</p>
+                        <p><strong>Verwendungszweck:</strong> <span class="highlight"> ${
+                        user.orderID
+                        }</span></p>
+                        <p><strong>Gesamtpreis:</strong> ${user.total?.toFixed(2)} €</p>
                     </div>
                     <p class="address">Alles schicken wir Ihnen an diese Adresse:</p>
                     <p class="address"><span class="highlight">van khanh do</span><br>
@@ -83,7 +86,17 @@ async function sendOrderEmail(user) {
                 </div>
             </body>
             </html>
+
     `;
+  // <h1>Order Confirmation</h1>
+  //     <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
+  //     <p><strong>Email:</strong> ${user.email}</p>
+  //     <p><strong>Phone:</strong> ${user.phone}</p>
+  //     <p><strong>Address:</strong> ${user.address}, ${user.city}, ${user.zipCode}</p>
+  //     <p><strong>Payment Method:</strong> ${user.method}</p>
+  //     <p><strong>Total:</strong> ${user.total?.toFixed(2)}EUR</p>
+  //     <p><strong>Transfer content:</strong> ${user.orderID}</p>
+  //     <p>Thank you for your order!</p>
 
   // Thiết lập nội dung email
   const mailOptions = {
