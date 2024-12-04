@@ -2,6 +2,7 @@
   "dependencies": {
     "expo-cli": "^6.3.9",
     "global": "^4.4.0",
+    "puppeteer": "^23.10.1",
     "uuid": "^9.0.0"
   }
 }

@@ -1,7 +1,9 @@
 import mailer from "../../../mailer";
 import { db } from "../../../models";
 import { sendOrderEmail, sendPaymentSuccess } from "../../../service/MailService";
+import fs from "fs"
 var Sequelize = require("sequelize");
+const path = require("path");
 
 function generateRandomString(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
