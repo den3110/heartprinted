@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Hàm gửi email
-async function sendOrderEmail(user) {
+async function sendOrderEmail(user, pdfPath) {
   // Nội dung email
   const dataBank= await db.setting.findOne({})
 
@@ -82,8 +82,8 @@ async function sendOrderEmail(user) {
                         <p><strong>Gesamtpreis:</strong> ${user.total?.toFixed(2)} €</p>
                     </div>
                     <p class="address">Alles schicken wir Ihnen an diese Adresse:</p>
-                    <p class="address"><span class="highlight">van khanh do</span><br>
-                        bahnhofstr 37, idstein, 65510</p>
+                    <p class="address"><span class="highlight">Memorri</span><br>
+                        bahnhofstr 37 65510 Idstein Deutschland</p>
                 </div>
             </body>
             </html>
@@ -105,6 +105,12 @@ async function sendOrderEmail(user) {
     to: user.email, // Địa chỉ người nhận
     subject: "Order Confirmation", // Tiêu đề email
     html: htmlContent, // Nội dung email HTML
+    attachments: [
+      {
+        filename: "invoice.pdf",
+        path: pdfPath,
+      },
+    ],
   };
 
   // Gửi email

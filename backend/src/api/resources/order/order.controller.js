@@ -15,6 +15,41 @@ function generateRandomString(length) {
     return result;
 }
 
+// Hàm tạo PDF từ HTML
+const generatePDF = async (htmlContent) => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(htmlContent);
+
+  const pdfPath = path.join(__dirname, "invoice.pdf");
+  await page.pdf({ path: pdfPath, format: "A4" });
+
+  await browser.close();
+  return pdfPath;
+};
+
+// Hàm gửi email kèm file PDF
+const pdfFile = async (data) => {
+  const { shipping, total } = data;
+
+  // Nội dung HTML cho file PDF
+  const htmlContent = `
+    <html>
+      <body>
+        <h1>Hóa đơn</h1>
+        <p>Người nhận: ${shipping?.name || "Không xác định"}</p>
+        <p>Email: ${shipping?.email || "Không xác định"}</p>
+        <p>Địa chỉ: ${shipping?.address?.address_line_1 || "Không xác định"}</p>
+        <p>Tổng số tiền: ${total} ${data.currency || ""}</p>
+      </body>
+    </html>
+  `;
+
+  // Tạo file PDF từ HTML
+  const pdfPath = await generatePDF(htmlContent);
+  return pdfPath;
+}
+
 
 export default {
   async index(req, res) {
@@ -74,11 +109,12 @@ export default {
           const data = await response.json();
 
           // Kiểm tra trạng thái thanh toán
-          console.log("data.status", data.status);
+          // console.log("data.status", data.status);
           if (data.status === "COMPLETED") {
             // Xử lý lưu đơn hàng vào database, hoặc các hành động cần thiết
             status = data.status;
-            await sendOrderEmail(req.body)
+            await sendOrderEmail(req.body, pdfFile(req.body))
+            
             if (id) {
               await db.product.destroy({ where: { user_id: id } });
             }
@@ -92,11 +128,11 @@ export default {
         }
       }
       if(method == "banking") {
-        await sendOrderEmail(req.body)
+        await sendOrderEmail(req.body, pdfFile(req.body))
         status = "waiting"
       }
       if(method == "credit") {
-        await sendOrderEmail(req.body)
+        await sendOrderEmail(req.body, pdfFile(req.body))
         status = "waiting"
       }
       // console.log(voucherId)
