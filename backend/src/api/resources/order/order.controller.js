@@ -4,7 +4,7 @@ import { sendOrderEmail, sendPaymentSuccess } from "../../../service/MailService
 import fs from "fs"
 var Sequelize = require("sequelize");
 const path = require("path");
-
+const puppeteer = require("puppeteer");
 function generateRandomString(length) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
