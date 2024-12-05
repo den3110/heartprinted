@@ -10,6 +10,7 @@ import round2number from "../../../util/round2number";
 var Sequelize = require("sequelize");
 const path = require("path");
 const puppeteer = require("puppeteer");
+
 function generateRandomString(length) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -26,7 +27,7 @@ function generateRandomString(length) {
 // Hàm tạo PDF từ HTML
 const generatePDF = async (htmlContent) => {
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: ["--no-sandbox", "--disable-setuid-sandbox"], headless: true
   });
   const page = await browser.newPage();
   page.on("request", (request) => {
