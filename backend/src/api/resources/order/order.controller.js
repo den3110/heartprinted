@@ -1,30 +1,39 @@
 import mailer from "../../../mailer";
 import { db } from "../../../models";
-import { sendOrderEmail, sendPaymentSuccess } from "../../../service/MailService";
-import fs from "fs"
+import {
+  sendOrderEmail,
+  sendPaymentSuccess,
+} from "../../../service/MailService";
+import fs from "fs";
+import moment from "moment";
+import round2number from "../../../util/round2number";
 var Sequelize = require("sequelize");
 const path = require("path");
 const puppeteer = require("puppeteer");
 function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
 
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters[randomIndex];
-    }
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
 
-    return result;
+  return result;
 }
 
 // Hàm tạo PDF từ HTML
 const generatePDF = async (htmlContent) => {
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
-  await page.setContent(htmlContent);
-
+  page.on("request", (request) => {
+    console.log("Loading resource:", request.url());
+  })
+  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+  // await new Promise((resolve) => setTimeout(resolve, 1000));
   const pdfPath = path.join(__dirname, "invoice.pdf");
   await page.pdf({ path: pdfPath, format: "A4" });
 
@@ -35,25 +44,176 @@ const generatePDF = async (htmlContent) => {
 // Hàm gửi email kèm file PDF
 const pdfFile = async (data) => {
   const { shipping, total } = data;
-
+  const dataSetting = await db.setting.findOne();
   // Nội dung HTML cho file PDF
   const htmlContent = `
-    <html>
-      <body>
-        <h1>Hóa đơn</h1>
-        <p>Người nhận: ${shipping?.name || "Không xác định"}</p>
-        <p>Email: ${shipping?.email || "Không xác định"}</p>
-        <p>Địa chỉ: ${shipping?.address?.address_line_1 || "Không xác định"}</p>
-        <p>Tổng số tiền: ${total} ${data.currency || ""}</p>
-      </body>
-    </html>
+   <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hóa đơn</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+      }
+
+      .invoice {
+        max-width: 800px;
+        margin: auto;
+        border: 1px solid #ccc;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .header .left,
+      .header .right {
+        width: 48%;
+      }
+
+      .header h2 {
+        margin: 0 0 10px;
+      }
+
+      .header p {
+        margin: 0 0 5px;
+      }
+
+      .payment-info {
+        border: 1px solid #000;
+        padding: 10px;
+        margin: 20px 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+      }
+
+      table th {
+        background-color: #f4f4f4;
+      }
+
+      .total {
+        text-align: right;
+      }
+
+      .total p {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="invoice">
+      <!-- Header -->
+      <div class="header">
+        <div class="left">
+          <h2>Rechnung</h2>
+          <div>
+            <p>Lieferant:</p>
+            <p><img src="https://memorri.com/static/media/logo_web_dark.1700b53eb3dd54c6fe2e.png" style="width: 100px;" /></p>
+            <p>Bahnhoftstr. 37<br />65510 Idstein</p>
+          </div>
+          <p>
+            Email:
+            <a href="mailto:Memorri.me@gmail.com">Memorri.me@gmail.com</a>
+          </p>
+          <p>Web: <a href="https://Memorri.com">Memorri.com</a></p>
+        </div>
+        <div class="right">
+          <h2>Số hóa đơn</h2>
+          <div>
+            <p>Abnehmer: ${data?.payer?.name}</p>
+            <p><strong>Name:</strong> ${data?.firstName}</p>
+            <p><strong>Adresse: ${data?.shipping?.address}</strong> abc</p>
+            <p><strong>Ort: ${data?.city}</strong> abc</p>
+          </div>
+        </div>
+        <div>
+            <p>Zahlungsart: ${data?.method}</p>
+            <p><strong>Ausstellungsdatum:</strong> ${moment(data?.createdAt || new Date()).format("DD-MM-YYYY")}</p>
+          </div>
+      </div>
+
+     
+      <div class="payment-info">
+        <p><strong>Kontoinhaber:</strong> ${dataSetting?.bank_account}</p>
+        <p><strong>Kontonummer:</strong> ${dataSetting?.iban}</p>
+        <p><strong>Bic:</strong> ${dataSetting?.bic}</p>
+        <p><strong>Verwendungszweck:</strong> ${data?.orderID}</p>
+      </div>
+
+      <!-- Table -->
+      <table>
+        <thead>
+          <tr>
+            <th>Liefererschein</th>
+            <th>Anzahl von<br />Maßeinheiten</th>
+            <th>Maßeinheit</th>
+            <th>Preis/Maßeinheit</th>
+            <th>MwSt.</th>
+            <th>Basis</th>
+            <th>MwSt.</th>
+            <th>Insgesamt</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data?.payload?.map((item, index) => `
+            <tr>
+              <td>Magnete Foto 78x53 mm</td>
+              <td>${item?.qty}</td>
+              <td>St.</td>
+              <td>${item?.price} €</td>
+              <td>${data?.discount} %</td>
+              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 1000))} €</td>
+              <td>3,2 €</td>
+              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 1000))} €</td>
+          </tr>
+          `).join("")}
+          <tr>
+            <td>Versandkosten</td>
+            <td>1</td>
+            <td>St.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>${data?.deliveryChange} €</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Total -->
+      <div class="total">
+        <p><strong>Gesamtsumme zu zahlen: 21,98 €</strong></p>
+      </div>
+    </div>
+  </body>
+</html>
+
   `;
 
   // Tạo file PDF từ HTML
   const pdfPath = await generatePDF(htmlContent);
   return pdfPath;
-}
-
+};
 
 export default {
   async index(req, res) {
@@ -73,30 +233,29 @@ export default {
         total,
         deliveryCharge,
         currency,
-        payload
+        payload,
       } = req.body;
       let status = "";
-      
+
       if (method == "paypal") {
-        const data= await db.setting.findOne()
-        let client_key
-        let secret_key
-        let paypal_api
-        console.log(data.mode_payment)
-        if(data.mode_payment=== true) {
-          client_key=data.client_key_live
-          secret_key=data.secret_key_live
-          paypal_api=process.env.PAYPAL_API_LIVE
+        const data = await db.setting.findOne();
+        let client_key;
+        let secret_key;
+        let paypal_api;
+        console.log(data.mode_payment);
+        if (data.mode_payment === true) {
+          client_key = data.client_key_live;
+          secret_key = data.secret_key_live;
+          paypal_api = process.env.PAYPAL_API_LIVE;
+        } else {
+          client_key = data.client_key_demo;
+          secret_key = data.secret_key_demo;
+          paypal_api = process.env.PAYPAL_API_DEMO;
         }
-        else {
-          client_key=data.client_key_demo
-          secret_key=data.secret_key_demo
-          paypal_api=process.env.PAYPAL_API_DEMO
-        }
-        const auth = Buffer.from(
-          `${client_key}:${secret_key}`
-        ).toString("base64");
-        
+        const auth = Buffer.from(`${client_key}:${secret_key}`).toString(
+          "base64"
+        );
+
         try {
           // Gọi PayPal API để kiểm tra trạng thái của order
           const response = await fetch(
@@ -117,8 +276,9 @@ export default {
           if (data.status === "COMPLETED") {
             // Xử lý lưu đơn hàng vào database, hoặc các hành động cần thiết
             status = data.status;
-            await sendOrderEmail(req.body, pdfFile(req.body))
-            
+            const pdff = await pdfFile(req.body);
+            await sendOrderEmail(req.body, pdff);
+
             if (id) {
               await db.product.destroy({ where: { user_id: id } });
             }
@@ -131,13 +291,16 @@ export default {
           return res.status(500).json({ errors: ["Error adding cart"] });
         }
       }
-      if(method == "banking") {
-        await sendOrderEmail(req.body, pdfFile(req.body))
-        status = "waiting"
+      if (method == "banking") {
+        const pdff = await pdfFile(req.body);
+        await sendOrderEmail(req.body, pdff);
+        status = "waiting";
       }
-      if(method == "credit") {
-        await sendOrderEmail(req.body, pdfFile(req.body))
-        status = "waiting"
+      if (method == "credit") {
+        const pdff = await pdfFile(req.body);
+
+        await sendOrderEmail(req.body, pdff);
+        status = "waiting";
       }
       // console.log(voucherId)
       await db.Order.create({
@@ -171,30 +334,37 @@ export default {
           }
         })
         .then(([order, p]) => {
-                let cartEntries = [];
-                payload?.map(item=> {
-                    const id= generateRandomString(12);
-                    JSON.parse(item?.image)?.map(item2=> cartEntries.push({
-                        orderId: order.id,
-                        addressId: p.id,
-                        photo: item2.product,
-                        name: id.toString()
-                    }))
-                })
-                // for (var i = 0; i < payload?.length; i++) {
-                //     cartEntries.push({
-                //         orderId: order.id,
-                //         addressId: p.id,
-                //         photo: payload?.image[i].product,
-                //     })
-                // }
-                return db.Cart.bulkCreate(cartEntries).then((r) => [r])
+          let cartEntries = [];
+          payload?.map((item) => {
+            const id = generateRandomString(12);
+            JSON.parse(item?.image)?.map((item2) =>
+              cartEntries.push({
+                orderId: order.id,
+                addressId: p.id,
+                photo: item2.product,
+                name: id.toString(),
+              })
+            );
+          });
+          // for (var i = 0; i < payload?.length; i++) {
+          //     cartEntries.push({
+          //         orderId: order.id,
+          //         addressId: p.id,
+          //         photo: payload?.image[i].product,
+          //     })
+          // }
+          return db.Cart.bulkCreate(cartEntries).then((r) => [r]);
         })
         .then((success) => {
           // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered successfully, ordered at "+ new Date())
           res
             .status(200)
-            .json({ success: true, ok: true, status: "COMPLETED", orderID: orderID});
+            .json({
+              success: true,
+              ok: true,
+              status: "COMPLETED",
+              orderID: orderID,
+            });
         })
         .catch(function (err) {
           // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered failed, ordered at "+ new Date())
@@ -382,12 +552,17 @@ export default {
   },
   async updateOrder(req, res) {
     try {
-      await sendPaymentSuccess({email: req.body?.Addresses?.[0]?.email, orderID: req.body?.number})
-      await db.Order.update({status: "COMPLETED"}, {where: { id: req.body.id }});
+      await sendPaymentSuccess({
+        email: req.body?.Addresses?.[0]?.email,
+        orderID: req.body?.number,
+      });
+      await db.Order.update(
+        { status: "COMPLETED" },
+        { where: { id: req.body.id } }
+      );
       return res.status(200).json({ ok: true });
-      
     } catch (error) {
       return res.status(500).json({ err, ok: false });
     }
-  }
+  },
 };
