@@ -135,7 +135,7 @@ async function sendPaymentSuccess(user) {
   const htmlContent = `
     <h1>Lieber Memorri Kunde,</h1>
     <p>nochmals vielen Dank für Ihren Auftrag.</p>
-    <p>Sie erhalten unsere Rechnung Nr. (${user?.orderID}).</p>
+    <p>Sie erhalten unsere Rechnung Nr.: ${user?.orderID}.</p>
     <p>Sobald die Ware durch unseren Logistikpartner übernommen wurde, erhalten Sie eine Versandbestätigung.</p>
     <p>Besuchen Sie uns bald wieder, über eine Weiterempfehlung würden wir uns sehr freuen.</p>
     <p>Mit freundlichen Grüßen,<br>Ihr Memorri-Team</p>
