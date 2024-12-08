@@ -140,7 +140,6 @@ const pdfFile = async (data) => {
           <p>Web: <a href="https://Memorri.com">Memorri.com</a></p>
         </div>
         <div class="right">
-          <h2>Rechnungsnummer</h2>
           <div>
             <p><strong></strong> ${data?.firstName}</p>
             <p><strong>${data?.shipping?.address}</strong></p>

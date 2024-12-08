@@ -87,9 +87,6 @@ async function sendOrderEmail(user, pdfPath) {
                           2
                         )} €</p>
                     </div>
-                    <p class="address">Alles schicken wir Ihnen an diese Adresse:</p>
-                    <p class="address"><span class="highlight">Memorri</span><br>
-                        bahnhofstr 37 65510 Idstein Deutschland</p>
                 </div>
             </body>
             </html>
