@@ -204,14 +204,15 @@ const pdfFile = async (data) => {
 
       <!-- Total -->
       <div class="total">
-        <p><strong>Gesamtsumme zu zahlen: ${round2number(parseFloat(item?.price * (1 - parseFloat(data?.discount) / 100)) + parseFloat(data?.deliveryChange))} €</strong></p>
+        <p><strong>Gesamtsumme zu zahlen: ${round2number((data?.total))} €</strong></p>
+
       </div>
     </div>
   </body>
 </html>
 
   `;
-
+//  + parseFloat(data?.deliveryChange)
   // Tạo file PDF từ HTML
   const pdfPath = await generatePDF(htmlContent);
   return pdfPath;
