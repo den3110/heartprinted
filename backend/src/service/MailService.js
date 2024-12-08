@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 // Hàm gửi email
 async function sendOrderEmail(user, pdfPath) {
   // Nội dung email
-  const dataBank= await db.setting.findOne({})
+  const dataBank = await db.setting.findOne({});
 
   const htmlContent = `
         <html lang="en">
@@ -72,14 +72,20 @@ async function sendOrderEmail(user, pdfPath) {
                     <p>Sobald wir Ihre Zahlung erhalten haben, wird Ihre Bestellung bearbeitet.</p>
                     <p>Wir haben Ihre Zahlung noch nicht erhalten. Bitte bezahlen Sie die Bestellung. Die Daten finden Sie hier:</p>
                     <div class="bank-details">
-                        <p><strong>Bank Name:</strong> ${dataBank?.bank_name}</p>
-                        <p><strong>Kontoinhaber:</strong> ${dataBank?.bank_account}</p>
+                        <p><strong>Bank Name:</strong> ${
+                          dataBank?.bank_name
+                        }</p>
+                        <p><strong>Kontoinhaber:</strong> ${
+                          dataBank?.bank_account
+                        }</p>
                         <p><strong>IBAN:</strong> ${dataBank?.iban}</p>
                         <p><strong>BIC:</strong> ${dataBank?.bic}</p>
                         <p><strong>Verwendungszweck:</strong> <span class="highlight"> ${
-                        user.orderID
+                          user.orderID
                         }</span></p>
-                        <p><strong>Gesamtpreis:</strong> ${user.total?.toFixed(2)} €</p>
+                        <p><strong>Gesamtpreis:</strong> ${user.total?.toFixed(
+                          2
+                        )} €</p>
                     </div>
                     <p class="address">Alles schicken wir Ihnen an diese Adresse:</p>
                     <p class="address"><span class="highlight">Memorri</span><br>
@@ -127,10 +133,24 @@ async function sendOrderEmail(user, pdfPath) {
 async function sendPaymentSuccess(user) {
   // Nội dung email
   const htmlContent = `
-        <h1>Order Confirmation</h1>
-        <p><strong>Transfer content:</strong> ${user.orderID}</p>
-        <p><strong>Your order is successfully, Thanks for your order</p>
-    `;
+    <h1>Lieber Memorri Kunde,</h1>
+    <p>nochmals vielen Dank für Ihren Auftrag.</p>
+    <p>Sie erhalten unsere Rechnung Nr. (${user?.orderID}).</p>
+    <p>Sobald die Ware durch unseren Logistikpartner übernommen wurde, erhalten Sie eine Versandbestätigung.</p>
+    <p>Besuchen Sie uns bald wieder, über eine Weiterempfehlung würden wir uns sehr freuen.</p>
+    <p>Mit freundlichen Grüßen,<br>Ihr Memorri-Team</p>
+    <hr>
+    <p>
+        <strong>Memorri</strong><br>
+        Bahnhofstr 37<br>
+        65510 Idstein<br>
+        Deutschland
+    </p>
+    <p>
+        Mail: <a href="mailto:Memorri.me@gmail.com">Memorri.me@gmail.com</a><br>
+        Web: <a href="https://memorri.com" target="_blank">https://memorri.com</a>
+    </p>
+`;
 
   // Thiết lập nội dung email
   const mailOptions = {

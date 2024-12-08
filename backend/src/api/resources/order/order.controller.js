@@ -27,12 +27,13 @@ function generateRandomString(length) {
 // Hàm tạo PDF từ HTML
 const generatePDF = async (htmlContent) => {
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"], headless: true
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: true,
   });
   const page = await browser.newPage();
   page.on("request", (request) => {
     console.log("Loading resource:", request.url());
-  })
+  });
   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
   // await new Promise((resolve) => setTimeout(resolve, 1000));
   const pdfPath = path.join(__dirname, "invoice.pdf");
@@ -141,15 +142,16 @@ const pdfFile = async (data) => {
         <div class="right">
           <h2>Rechnungsnummer</h2>
           <div>
-            <p>Abnehmer: ${data?.payer?.name}</p>
-            <p><strong>Name:</strong> ${data?.firstName}</p>
-            <p><strong>Adresse: ${data?.shipping?.address}</strong> abc</p>
-            <p><strong>Ort: ${data?.city}</strong></p>
+            <p><strong></strong> ${data?.firstName}</p>
+            <p><strong>${data?.shipping?.address}</strong></p>
+            <p><strong>${data?.city}</strong></p>
           </div>
         </div>
         <div>
             <p>Zahlungsart: ${data?.method}</p>
-            <p><strong>Ausstellungsdatum:</strong> ${moment(data?.createdAt || new Date()).format("DD-MM-YYYY")}</p>
+            <p><strong>Ausstellungsdatum:</strong> ${moment(
+              data?.createdAt || new Date()
+            ).format("DD-MM-YYYY")}</p>
           </div>
       </div>
 
@@ -177,18 +179,26 @@ const pdfFile = async (data) => {
           </tr>
         </thead>
         <tbody>
-          ${data?.payload?.map((item, index) => `
+          ${data?.payload
+            ?.map(
+              (item, index) => `
             <tr>
               <td>Magnete Foto 78x53 mm</td>
               <td>${item?.qty}</td>
               <td>St.</td>
               <td>${item?.price} €</td>
               <td>${data?.discount} %</td>
-              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 100))} €</td>
+              <td>${round2number(
+                item?.price * (1 - parseFloat(data?.discount) / 100)
+              )} €</td>
               <td>3,2 €</td>
-              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 100))} €</td>
+              <td>${round2number(
+                item?.price * (1 - parseFloat(data?.discount) / 100)
+              )} €</td>
           </tr>
-          `).join("")}
+          `
+            )
+            .join("")}
           <tr>
             <td>Versandkosten</td>
             <td>1</td>
@@ -204,7 +214,9 @@ const pdfFile = async (data) => {
 
       <!-- Total -->
       <div class="total">
-        <p><strong>Gesamtsumme zu zahlen: ${round2number((data?.total))} €</strong></p>
+        <p><strong>Gesamtsumme zu zahlen: ${round2number(
+          data?.total
+        )} €</strong></p>
 
       </div>
     </div>
@@ -212,7 +224,10 @@ const pdfFile = async (data) => {
 </html>
 
   `;
-//  
+  //
+  {
+    /* <p>Abnehmer: ${data?.payer?.name}</p> */
+  }
   // Tạo file PDF từ HTML
   const pdfPath = await generatePDF(htmlContent);
   return pdfPath;
@@ -360,14 +375,12 @@ export default {
         })
         .then((success) => {
           // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered successfully, ordered at "+ new Date())
-          res
-            .status(200)
-            .json({
-              success: true,
-              ok: true,
-              status: "COMPLETED",
-              orderID: orderID,
-            });
+          res.status(200).json({
+            success: true,
+            ok: true,
+            status: "COMPLETED",
+            orderID: orderID,
+          });
         })
         .catch(function (err) {
           // mailer.sendUserOrder(deliveryAddress?.email ||"", "You have ordered failed, ordered at "+ new Date())

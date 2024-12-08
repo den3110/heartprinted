@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     number: DataTypes.STRING,
     paymentmethod: DataTypes.STRING,
     deliverydate: DataTypes.DATE,
-    grandtotal: DataTypes.INTEGER,
+    grandtotal: DataTypes.FLOAT,
     status: DataTypes.STRING,
     voucherId: DataTypes.INTEGER,
     deliveryFee: DataTypes.INTEGER,
