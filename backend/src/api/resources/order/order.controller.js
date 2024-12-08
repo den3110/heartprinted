@@ -204,7 +204,7 @@ const pdfFile = async (data) => {
 
       <!-- Total -->
       <div class="total">
-        <p><strong>Gesamtsumme zu zahlen: ${round2number(parseFloat(data?.total)+ parseFloat(data?.deliveryChange))} €</strong></p>
+        <p><strong>Gesamtsumme zu zahlen: ${round2number((data?.total))} €</strong></p>
 
       </div>
     </div>
