@@ -183,9 +183,9 @@ const pdfFile = async (data) => {
               <td>St.</td>
               <td>${item?.price} €</td>
               <td>${data?.discount} %</td>
-              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 1000))} €</td>
+              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 100))} €</td>
               <td>3,2 €</td>
-              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 1000))} €</td>
+              <td>${round2number(item?.price * (1 - parseFloat(data?.discount) / 100))} €</td>
           </tr>
           `).join("")}
           <tr>
