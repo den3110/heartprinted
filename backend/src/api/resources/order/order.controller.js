@@ -139,12 +139,12 @@ const pdfFile = async (data) => {
           <p>Web: <a href="https://Memorri.com">Memorri.com</a></p>
         </div>
         <div class="right">
-          <h2>Số hóa đơn</h2>
+          <h2>Rechnungsnummer</h2>
           <div>
             <p>Abnehmer: ${data?.payer?.name}</p>
             <p><strong>Name:</strong> ${data?.firstName}</p>
             <p><strong>Adresse: ${data?.shipping?.address}</strong> abc</p>
-            <p><strong>Ort: ${data?.city}</strong> abc</p>
+            <p><strong>Ort: ${data?.city}</strong></p>
           </div>
         </div>
         <div>
@@ -155,6 +155,7 @@ const pdfFile = async (data) => {
 
      
       <div class="payment-info">
+        <p><strong>Bankname:</strong> ${dataSetting?.bank_name}</p>
         <p><strong>Kontoinhaber:</strong> ${dataSetting?.bank_account}</p>
         <p><strong>Kontonummer:</strong> ${dataSetting?.iban}</p>
         <p><strong>Bic:</strong> ${dataSetting?.bic}</p>
@@ -203,7 +204,7 @@ const pdfFile = async (data) => {
 
       <!-- Total -->
       <div class="total">
-        <p><strong>Gesamtsumme zu zahlen: 21,98 €</strong></p>
+        <p><strong>Gesamtsumme zu zahlen: ${round2number(parseFloat(item?.price * (1 - parseFloat(data?.discount) / 100)) + parseFloat(data?.deliveryChange))} €</strong></p>
       </div>
     </div>
   </body>
