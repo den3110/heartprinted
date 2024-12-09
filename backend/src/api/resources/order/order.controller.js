@@ -362,7 +362,7 @@ export default {
                 discrict: req?.body?.address,
                 city: req?.body?.state,
                 states: req?.body?.city,
-                shipping: req?.body?.address+ "," + req?.body?.state+ "," + req?.body?.city,
+                shipping: req?.body?.address+ "," + req?.body?.state+ "," + req?.body?.city + "," + req?.body?.zipCode,
               }).then((p) => [order, p]);
             }
           }
