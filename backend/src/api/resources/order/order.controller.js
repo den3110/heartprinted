@@ -261,7 +261,7 @@ export default {
         let client_key;
         let secret_key;
         let paypal_api;
-        console.log(data.mode_payment);
+        // console.log(data.mode_payment);
         if (data.mode_payment === true) {
           client_key = data.client_key_live;
           secret_key = data.secret_key_live;
@@ -333,23 +333,38 @@ export default {
       })
         .then((order) => {
           if (order) {
-            return db.Address.create({
-              orderId: order.id,
-              custId: 1,
-              fullname: shipping ? shipping.name : "",
-              phone: shipping ? shipping.phone : "",
-              email: shipping ? shipping.email : "",
-              discrict: shipping?.address
-                ? shipping?.address?.address_line_1
-                : "",
-              city: shipping?.address ? shipping?.admin_area_1 : "",
-              states: shipping?.address ? shipping?.country_code : "",
-              shipping: shipping?.address
-                ? shipping.address?.address_line_1 +
-                  shipping.address?.admin_area_2 +
-                  shipping.address?.admin_area_1
-                : "",
-            }).then((p) => [order, p]);
+            if(method=== "paypal") {
+              return db.Address.create({
+                orderId: order.id,
+                custId: 1,
+                fullname: shipping ? shipping.name : "",
+                phone: shipping ? shipping.phone : "",
+                email: shipping ? shipping.email : "",
+                discrict: shipping?.address
+                  ? shipping?.address?.address_line_1
+                  : "",
+                city: shipping?.address ? shipping?.admin_area_1 : "",
+                states: shipping?.address ? shipping?.country_code : "",
+                shipping: shipping?.address
+                  ? shipping.address?.address_line_1 +
+                    shipping.address?.admin_area_2 +
+                    shipping.address?.admin_area_1
+                  : "",
+              }).then((p) => [order, p]);
+            }
+            else {
+              return db.Address.create({
+                orderId: order.id,
+                custId: 1,
+                fullname: shipping ? shipping.name : "",
+                phone: shipping ? shipping.phone : "",
+                email: shipping ? shipping.email : "",
+                discrict: req?.body?.address,
+                city: req?.body?.state,
+                states: req?.body?.city,
+                shipping: req?.body?.address+ "," + req?.body?.state+ "," + req?.body?.city,
+              }).then((p) => [order, p]);
+            }
           }
         })
         .then(([order, p]) => {
