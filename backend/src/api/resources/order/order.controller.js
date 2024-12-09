@@ -141,9 +141,11 @@ const pdfFile = async (data) => {
         </div>
         <div class="right">
           <div>
-            <p><strong>${data?.shipping?.address}</strong></p>
-            <p><strong>${data?.city}</strong></p>
-            <p><strong>${data?.zipCode}, ${data?.state}</strong></p>
+            <p><strong>Abnehmer: ${data?.firstName} ${data?.lastName}</strong></p>
+
+            <p><strong>Adresse: ${data?.shipping?.address}</strong></p>
+            <p><strong>PLZ: ${data?.zipCode}, ${data?.state}</strong></p>
+            <p><strong>Ort: ${data?.city}</strong></p>
           </div>
         </div>
         <div>
