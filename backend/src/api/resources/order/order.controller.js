@@ -10,6 +10,7 @@ import round2number from "../../../util/round2number";
 var Sequelize = require("sequelize");
 const path = require("path");
 const puppeteer = require("puppeteer");
+const fetch = require('node-fetch');
 
 function generateRandomString(length) {
   const characters =
